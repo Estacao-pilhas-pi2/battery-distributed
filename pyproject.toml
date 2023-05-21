@@ -1,0 +1,34 @@
+[tool.poetry]
+name = "battery-distributed"
+version = "0.1.0"
+description = ""
+authors = ["Thiago Paiva <thiagohdaqw@gmail.com>"]
+readme = "README.md"
+packages = [{include = "battery_distributed"}]
+license = "MIT"
+classifiers = [
+    "Intended Audience :: Education",
+    "Natural Language :: Portuguese (Brazilian)",
+    "Development Status :: 1 - Planning",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3 :: Only",
+    "Topic :: Scientific/Engineering :: Image Recognition",
+]
+
+
+[tool.poetry.dependencies]
+python = ">=3.8,<3.12"
+battery-analyser = { git = "https://github.com/Estacao-pilhas-pi2/battery-analyser.git" }
+opencv-python = "^4.7.0.72"
+aiofiles = "^23.1.0"
+httpx = "^0.24.1"
+
+[tool.poetry.group.dev.dependencies]
+
+
+[tool.poetry.group.doc.dependencies]
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

@@ -1,0 +1,4 @@
+[submodule "battery-analyser"]
+	path = battery-analyser
+	url = https://github.com/Estacao-pilhas-pi2/battery-analyser
+    branch = main
