@@ -12,6 +12,6 @@ async def main():
     maquina_id = os.environ.get("MAQUINA_ID", "unique id")
     maquina = Maquina(maquina_id)
 
-    controller.init(maquina)
     analyser_sem = analyser.init()
-    await telemetry.init(maquina, analyser_sem)
+    controller.init(maquina, analyser_sem)
+    await telemetry.init(maquina)
