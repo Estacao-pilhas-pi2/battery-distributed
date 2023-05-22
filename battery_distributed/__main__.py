@@ -1,6 +1,10 @@
 import logging
 import asyncio
-from . import main
+from . import main, controller
 
-logging.getLogger().setLevel(logging.DEBUG)
-asyncio.run(main.main())
+try:
+    logging.getLogger().setLevel(logging.DEBUG)
+    asyncio.run(main.main())
+except:
+    if controller.PROCESS is not None:
+        controller.PROCESS.terminate()

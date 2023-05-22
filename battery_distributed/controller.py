@@ -9,7 +9,8 @@ from subprocess import Popen, PIPE
 from battery_distributed.model import Maquina
 
 LOG = "Controller"
-CONTROLLER_RUNNER_PATH=os.environ.get("CONTROLLER_RUNNER_PATH", "tests/controller_mock.sh")
+CONTROLLER_RUNNER_PATH = os.environ.get("CONTROLLER_RUNNER_PATH", "tests/controller_mock.sh")
+PROCESS = None
 
 
 def init(maquina: Maquina, analyser_sem: Semaphore):
@@ -21,6 +22,7 @@ def controller_spawner(maquina: Maquina, analyser_sem: Semaphore):
         try:
             logging.info(f"{LOG}: Spawning {CONTROLLER_RUNNER_PATH} controller")
             with Popen([CONTROLLER_RUNNER_PATH], stdout=PIPE, stdin=PIPE) as proc:
+                PROCESS = proc
                 for line in proc.stdout:
                     logging.debug(f"{LOG}: Receiving from controller: {line}")
                     # Mock
@@ -32,5 +34,8 @@ def controller_spawner(maquina: Maquina, analyser_sem: Semaphore):
                     maquina.quantidade_V9 = random.randint(0, 20)
 
         except Exception as e:
+            if PROCESS is not None:
+                PROCESS.terminate()
             logging.error(f"{LOG}: Error in controller runner. Respawnning in 5 seconds... {e}")
-            time.sleep(5)
+
+        time.sleep(5)
