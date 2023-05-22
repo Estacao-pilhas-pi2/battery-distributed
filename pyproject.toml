@@ -18,16 +18,9 @@ classifiers = [
 
 [tool.poetry.dependencies]
 python = ">=3.8,<3.12"
-battery-analyser = { git = "https://github.com/Estacao-pilhas-pi2/battery-analyser.git" }
+battery-analyser = { path = "./battery-analyser" }
 opencv-python = "^4.7.0.72"
-aiofiles = "^23.1.0"
 httpx = "^0.24.1"
-
-[tool.poetry.group.dev.dependencies]
-
-
-[tool.poetry.group.doc.dependencies]
-
 
 [build-system]
 requires = ["poetry-core"]

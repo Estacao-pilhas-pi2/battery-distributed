@@ -12,17 +12,6 @@ files = [
 ]
 
 [[package]]
-name = "aiofiles"
-version = "23.1.0"
-description = "File support for asyncio."
-optional = false
-python-versions = ">=3.7,<4.0"
-files = [
-    {file = "aiofiles-23.1.0-py3-none-any.whl", hash = "sha256:9312414ae06472eb6f1d163f555e466a23aed1c8f60c30cccf7121dba2e53eb2"},
-    {file = "aiofiles-23.1.0.tar.gz", hash = "sha256:edd247df9a19e0db16534d4baaf536d6609a43e1de5401d7a4c1c148753a1635"},
-]
-
-[[package]]
 name = "anyio"
 version = "3.6.2"
 description = "High level compatibility layer for multiple asynchronous event loop implementations"
@@ -59,7 +48,7 @@ wheel = ">=0.23.0,<1.0"
 
 [[package]]
 name = "battery-analyser"
-version = "0.1.2"
+version = "0.1.3"
 description = ""
 optional = false
 python-versions = ">=3.8,<3.12"
@@ -73,10 +62,8 @@ pillow = "^9.5.0"
 tensorflow = "^2.12.0"
 
 [package.source]
-type = "git"
-url = "https://github.com/Estacao-pilhas-pi2/battery-analyser.git"
-reference = "HEAD"
-resolved_reference = "392ec25f55310c8c44a9c18968817bf50eb1fe58"
+type = "directory"
+url = "battery-analyser"
 
 [[package]]
 name = "cachetools"
@@ -1372,4 +1359,4 @@ testing = ["big-O", "flake8 (<5)", "jaraco.functools", "jaraco.itertools", "more
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8,<3.12"
-content-hash = "1861688b35d2eb6da8a0e46939586131a7370fb4c7aebf77afe92f63fc67b046"
+content-hash = "680b92ce27da25970783c8bc4055513134ad9be524c19fd8f405fd2d19c48039"
