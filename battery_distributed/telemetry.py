@@ -3,7 +3,7 @@ import logging
 from threading import Semaphore
 from asyncio import sleep
 
-from model import Maquina
+from battery_distributed.model import Maquina
 
 
 LOG = "Telemetry"
@@ -12,5 +12,5 @@ LOG = "Telemetry"
 async def init(maquina: Maquina, analyser_sem: Semaphore):
     while True:
         analyser_sem.release()
-        await sleep(30)
+        await sleep(5)
         logging.info(f"{LOG}: telemetry... {maquina}")

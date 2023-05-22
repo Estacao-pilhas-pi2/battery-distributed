@@ -1,0 +1,12 @@
+[Unit]
+Description = "Battery Distributed daemon"
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=1
+EnvironmentFile=...
+ExecStart=/usr/bin/python3 -m battery_distributed
+
+[Install]
+WantedBy=multi-user.target

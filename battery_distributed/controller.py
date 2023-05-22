@@ -2,9 +2,10 @@ import os
 import time
 import logging
 
-from model import Maquina
 from threading import Thread
 from subprocess import Popen, PIPE
+
+from battery_distributed.model import Maquina
 
 LOG = "Controller"
 CONTROLLER_RUNNER_PATH=os.environ.get("CONTROLLER_RUNNER_PATH", "tests/controller_mock.sh")
