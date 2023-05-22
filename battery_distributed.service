@@ -6,6 +6,7 @@ Type=simple
 Restart=always
 RestartSec=1
 EnvironmentFile=...
+User=pi2
 ExecStart=/usr/bin/python3 -m battery_distributed
 
 [Install]
