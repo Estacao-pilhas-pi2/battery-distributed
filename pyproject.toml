@@ -19,7 +19,7 @@ classifiers = [
 [tool.poetry.dependencies]
 python = ">=3.8,<3.12"
 battery-analyser = { path = "./battery-analyser" }
-opencv-python = "^4.7.0.72"
+opencv-python = "~4.5.3.56"
 httpx = "^0.24.1"
 
 [build-system]

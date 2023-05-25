@@ -18,11 +18,12 @@ def init() -> Semaphore:
 
 def run_analyser_worker(sem: Semaphore):
     cam = cv2.VideoCapture(CAM_ID)
+    cam.set(cv2.CAP_PROP_FRAME_WIDTH, ba_predict.WIDTH)
+    cam.set(cv2.CAP_PROP_FRAME_HEIGHT, ba_predict.HEIGHT)
 
     while True:
         sem.acquire()
         _, frame = cam.read()
 
-        frame = cv2.resize(frame, ba_predict.IMAGE_SIZE)
         prediction = ba_predict.predict(frame)
         logging.info(f"{LOG}: {prediction}")
