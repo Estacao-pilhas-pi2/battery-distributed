@@ -33,7 +33,7 @@ trio = ["trio (>=0.16,<0.22)"]
 
 [[package]]
 name = "battery-analyser"
-version = "0.2.0"
+version = "0.2.1"
 description = ""
 optional = false
 python-versions = ">=3.8,<3.12"
@@ -387,4 +387,4 @@ sounddevice = ">=0.4.4"
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8,<3.12"
-content-hash = "2a896be0fa58bc2b899cfc6bf2ac57300d738708de5625824dfa408b7f7df4c0"
+content-hash = "c15fa1939b30fc132a82e3d128ba80da6e7bd0c23be8e4315517ec6220fde6fb"
