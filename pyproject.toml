@@ -19,9 +19,9 @@ classifiers = [
 [tool.poetry.dependencies]
 python = ">=3.8,<3.12"
 battery-analyser = { path = "./battery-analyser" }
-httpx = "^0.24.1"
-picamera = "^1.13"
+# picamera = "^1.13"
 numpy = ">=1.20.0"
+requests = "^2.31.0"
 
 [build-system]
 requires = ["poetry-core"]
