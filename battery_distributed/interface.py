@@ -12,6 +12,7 @@ APP = tk.Tk()
 APP.geometry("1024x600")
 APP.title("")
 APP.configure(bg="#038C3E")
+APP.attributes('-fullscreen', True)
 
 images = {}
 
@@ -183,48 +184,6 @@ def cria_widget_status(message, image_path, bg, fg, resize=200):
 
 
 pilhas = {"AAA": 0, "AA": 0, "C": 0, "D": 0, "V9": 0}
-
-
-# def change_values():
-#     configure_columns(1)
-#     widget_logo = cria_widget_logo()
-#     widget_primario, widget_pilhas = cria_widget_principal(pilhas)
-#     widget_secundario_timer, label_timer = cria_widget_timer(
-#         "Coloque uma pilha\ndentro de:", 5, "para não encerrar\no processo"
-#     )
-#     widget_secundario_warn = cria_widget_status(
-#         "Processando pilha ...\nNão insira outra\naté encerrar o processo.",
-#         "warn_image.png",
-#         "#038C3E",
-#         "#F4F4F8",
-#     )
-#     widget_secundario_error = cria_widget_status(
-#         "Erro no processamento. \nPilha não identificada.\nDevolvendo ...",
-#         "error_image.png",
-#         "#038C3E",
-#         "#F4F4F8",
-#         resize=180,
-#     )
-#     while True:
-#         configure_columns(1)
-#         widget_logo.grid(row=0, column=0)
-#         widget_primario.grid_forget()
-#         widget_secundario_error.grid_forget()
-#         sleep(1)
-#         widget_primario.grid(row=0, column=0)
-#         widget_logo.grid_forget()
-#         widget_secundario_timer.grid(row=0, column=1)
-#         configure_columns(2)
-#         sleep(1)
-#         widget_secundario_warn.grid(row=0, column=1)
-#         widget_secundario_timer.grid_forget()
-#         sleep(1)
-#         widget_secundario_error.grid(row=0, column=1)
-#         widget_secundario_warn.grid_forget()
-#         sleep(1)
-
-
-# Thread(target=change_values).start()
 
 widget_logo = cria_widget_logo()
 widget_primario, widget_pilhas = cria_widget_principal(pilhas)

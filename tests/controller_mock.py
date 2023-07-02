@@ -34,4 +34,4 @@ while True:
     if option == 5:
         print(D_NEMPTY, flush=True)
 
-    time.sleep(50)
+    time.sleep(5)
