@@ -16,9 +16,8 @@ D_EMPTY = "D0"
 D_NEMPTY = "D1"
 IMAGE_ANALYSE = "AI"
 
-
 while True:
-    option = random.randint(0, 6)
+    option = random.randint(0, 4)
 
     if option == 0:
         print(IMAGE_ANALYSE, flush=True)
@@ -35,4 +34,4 @@ while True:
     if option == 5:
         print(D_NEMPTY, flush=True)
 
-    time.sleep(2)
+    time.sleep(50)

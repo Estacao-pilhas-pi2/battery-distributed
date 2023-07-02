@@ -19,11 +19,12 @@ CONTROLLER_RUNNER = os.environ.get("CONTROLLER_RUNNER_PATH", "python3 tests/cont
 PROCESS = None
 
 machine_session: MachineSession = None
+current_timer = 0
 
 
 def init(machine: Machine):
-    signal.signal(signal.SIGALRM, end_machine_session)
     Thread(target=controller_spawner, args=(machine,)).start()
+    Thread(target=timer).start()
 
 
 def controller_spawner(machine: Machine):
@@ -69,20 +70,24 @@ IMAGE_ANALYSE = "AI"
 
 
 def run_command(machine: Machine, command: str) -> Optional[str]:
+    global current_timer
+
     logging.info(f"{LOG}: received command: {command}")
 
     if command == IMAGE_ANALYSE:
+        interface.change_to_processing()
         reset_machine_session_countdown(machine)
         type = analyser.predict_battery_type()
         increment_battery(machine, type)
         increment_battery(machine_session, type)
         if type == Battery.UNKNOWN:
-            # TODO: show error in display
-            ...
+            current_timer = 0
+            interface.change_to_session_error()
+            current_timer = 10
         else:
-            # TODO: increment display battery counts...
-            ...
-        start_countdown()
+            interface.add_session_state(machine_session)
+            interface.set_countdown(machine_session.inactive_countdown)
+            current_timer = 1
         return f"AI{type.value}"
 
     if command == V9_EMPTY:
@@ -126,31 +131,39 @@ def create_machine_session(machine: Machine):
 
 
 def reset_machine_session_countdown(machine: Machine):
-    signal.alarm(0)
+    global current_timer
+    current_timer = 0
     if not machine_session:
         create_machine_session(machine)
     machine_session.inactive_countdown = MACHINE_SESSION_MAX_INACTIVE_SECS
-    interface.set_countdown(machine_session.inactive_countdown)
 
 
-def end_machine_session(signum, frame):
-    global machine_session
+def timer():
+    global machine_session, current_timer
 
-    if not machine_session:
-        return
+    while True:
+        time.sleep(1)
 
-    if machine_session.inactive_countdown == 0:
-        central.send_payment(machine_session)
-        machine_session = None
-        signal.alarm(0)
-        logging.info(f"{LOG}: ending machine session")
-        return
+        if current_timer > 0:
+            current_timer = current_timer - 1
+            continue
+
+
+        if not machine_session:
+            interface.change_to_main_screen()
+            continue
+
+        if machine_session.inactive_countdown == 0:
+            central.send_payment(machine_session)
+            interface.change_to_session_end(machine_session)
+            machine_session = None
+            current_timer = 30
+            logging.info(f"{LOG}: ending machine session")
+            continue
+        
+        machine_session.inactive_countdown -= 1
+        logging.info(f"{LOG}: decrementing machine session. Countdown = {machine_session.inactive_countdown}")
+        interface.set_countdown(machine_session.inactive_countdown)
+        logging.info(f"{LOG}: end set countdown")
+        current_timer = 1
     
-    machine_session.inactive_countdown -= 1
-    interface.set_countdown(machine_session.inactive_countdown)
-    signal.alarm(1)
-    logging.info(f"{LOG}: decrementing machine session. Countdown = {machine_session.inactive_countdown}")
-
-
-def start_countdown():
-    signal.alarm(1)
