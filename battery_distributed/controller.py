@@ -92,23 +92,23 @@ def run_command(machine: Machine, command: str) -> Optional[str]:
 
     if command == V9_EMPTY:
         machine.v9_count = 0
-        central.send_machine_empty(machine)
+        central.send_machine_empty(machine, "V9")
 
     if command == AA_EMPTY:
         machine.aa_count = 0
-        central.send_machine_empty(machine)
+        central.send_machine_empty(machine, "AA")
 
     if command == AAA_EMPTY:
         machine.aaa_count = 0
-        central.send_machine_empty(machine)
+        central.send_machine_empty(machine, "AAA")
 
     if command == C_EMPTY:
         machine.c_count = 0
-        central.send_machine_empty(machine)
+        central.send_machine_empty(machine, "C")
 
     if command == D_EMPTY:
         machine.d_count = 0
-        central.send_machine_empty(machine)
+        central.send_machine_empty(machine, "D")
 
 
 def increment_battery(machine: Machine, battery: Battery):
@@ -120,8 +120,8 @@ def increment_battery(machine: Machine, battery: Battery):
         machine.aaa_count += 1
     elif battery == Battery.D:
         machine.d_count += 1
-    # elif battery == Battery.C:
-    #   machine.quantidade_C += 1
+    elif battery == Battery.C:
+      machine.c_count += 1
 
 
 def create_machine_session(machine: Machine):
@@ -154,8 +154,8 @@ def timer():
             continue
 
         if machine_session.inactive_countdown == 0:
-            central.send_payment(machine_session)
-            interface.change_to_session_end(machine_session)
+            response = central.send_payment(machine_session)
+            interface.change_to_session_end(machine_session, response)
             machine_session = None
             current_timer = 30
             logging.info(f"{LOG}: ending machine session")

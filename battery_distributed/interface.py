@@ -210,7 +210,7 @@ SESSION_PROCESSING = 2
 SESSION_ERROR = 3
 SESSION_END = 4
 
-current_screen = MAIN
+current_screen = None
 current_widget = None
 
 
@@ -221,7 +221,7 @@ def change_to_main_screen():
 
     configure_columns(1)
     widget_logo.grid(row=0, column=0)
-    if current_screen != MAIN:
+    if current_screen != MAIN and current_screen is not None:
         widget_primario.grid_forget()
         current_widget.grid_forget()
     current_screen = MAIN
@@ -277,8 +277,8 @@ def change_to_session_error():
 
 
 @session_screen
-def change_to_session_end(machine: MachineSession):
-    widget_qrcode = cria_widget_qrcode("www.google.com")
+def change_to_session_end(machine: MachineSession, request):
+    widget_qrcode = cria_widget_qrcode(request)
     widget_qrcode.grid(row=0, column=1)
     return SESSION_END, widget_qrcode
 
