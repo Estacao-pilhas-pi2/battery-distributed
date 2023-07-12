@@ -122,7 +122,7 @@ def cria_widget_qrcode(qr_data):
     qr = qrcode.QRCode()
     qr.add_data(qr_data)
     qr.make(fit=True)
-    qr_image = qr.make_image(fill_color="#000000", back_color="#F4F4F8")
+    qr_image = qr.make_image(fill_color="#000000", back_color="#F4F4F8").resize((220, 250))
     qr_photo = ImageTk.PhotoImage(
         qr_image, master=widget_secundario, width=200, height=200
     )

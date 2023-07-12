@@ -1,7 +1,6 @@
 import os
 import time
 import logging
-import signal
 
 from threading import Thread
 from subprocess import Popen, PIPE
