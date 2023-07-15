@@ -1,6 +1,7 @@
 import os
 import time
 import logging
+import serial
 
 from threading import Thread
 from subprocess import Popen, PIPE
@@ -15,7 +16,9 @@ import battery_distributed.interface as interface
 
 LOG = "Controller"
 CONTROLLER_RUNNER = os.environ.get("CONTROLLER_RUNNER_PATH", "python3 tests/controller_mock.py")
-PROCESS = None
+SERIAL_PORT = os.environ.get("SERIAL_PORT", "/dev/ttyUSB0")
+BAUDRATE = os.environ.get("BAUDRATE", 19200)
+SERIAL = None
 
 machine_session: MachineSession = None
 current_timer = 0
@@ -30,24 +33,21 @@ def controller_spawner(machine: Machine):
     while True:
         try:
             logging.info(f"{LOG}: Spawning {CONTROLLER_RUNNER} controller")
-            with Popen(CONTROLLER_RUNNER.split(), stdout=PIPE, stdin=PIPE, text=True) as proc:
-                PROCESS = proc
-                for line in proc.stdout:
-                    if not line:
-                        continue
-                    line = line.strip()
-                    if not line:
-                        continue
-                    response = run_command(machine, line)
-                    
-                    if response:
-                        logging.info(f"{LOG}: sending response: {response}")
-                        proc.stdin.write(response)
-                        proc.stdin.write("\n")
-                        proc.stdin.flush()
+            with serial.Serial(SERIAL_PORT, BAUDRATE, timeout=0) as ser:
+                SERIAL = ser
+                line = ser.readline().decode('utf-8').strip()
+                if not line:
+                    continue
+                response = run_command(machine, line)
+
+                if response:
+                    logging.info(f"{LOG}: sending response: {response}")
+                    ser.write(str(len(response)).encode('utf-8'))
+                    ser.write(response.encode('utf-8'))
+                    ser.flush()
         except Exception as e:
-            if PROCESS is not None:
-                PROCESS.terminate()
+            if SERIAL is not None:
+                SERIAL.close()
             logging.error(f"{LOG}: Error in controller runner. Respawnning in 5 seconds... {e}")
 
         time.sleep(5)

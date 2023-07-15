@@ -9,8 +9,8 @@ from battery_distributed.model import Machine
 
 def terminate(signum, frame):
     print("Finalizando lindamente...")
-    if controller.PROCESS is not None:
-        controller.PROCESS.terminate()
+    if controller.SERIAL is not None:
+        controller.SERIAL.close()
     interace.APP.quit()
 
 def main():
