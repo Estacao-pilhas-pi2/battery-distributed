@@ -15,7 +15,6 @@ import battery_distributed.interface as interface
 
 
 LOG = "Controller"
-CONTROLLER_RUNNER = os.environ.get("CONTROLLER_RUNNER_PATH", "python3 tests/controller_mock.py")
 SERIAL_PORT = os.environ.get("SERIAL_PORT", "/dev/ttyUSB0")
 BAUDRATE = os.environ.get("BAUDRATE", 19200)
 SERIAL = None
@@ -32,9 +31,12 @@ def init(machine: Machine):
 def controller_spawner(machine: Machine):
     while True:
         try:
-            logging.info(f"{LOG}: Spawning {CONTROLLER_RUNNER} controller")
-            with serial.Serial(SERIAL_PORT, BAUDRATE, timeout=0) as ser:
+            logging.info(f"{LOG}: Connecting {SERIAL_PORT} serial port")
+            with serial.Serial(SERIAL_PORT, BAUDRATE, timeout=1) as ser:
                 SERIAL = ser
+                ser.reset_input_buffer()
+                ser.reset_output_buffer()
+
                 line = ser.readline().decode('utf-8').strip()
                 if not line:
                     continue
@@ -48,7 +50,7 @@ def controller_spawner(machine: Machine):
         except Exception as e:
             if SERIAL is not None:
                 SERIAL.close()
-            logging.error(f"{LOG}: Error in controller runner. Respawnning in 5 seconds... {e}")
+            logging.error(f"{LOG}: Error in serial port. Reconnecting in 5 seconds... {e}")
 
         time.sleep(5)
 
