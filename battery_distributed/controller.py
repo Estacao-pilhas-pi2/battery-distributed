@@ -84,7 +84,7 @@ def run_command(machine: Machine, command: str) -> Optional[str]:
         if type == Battery.UNKNOWN:
             current_timer = 0
             interface.change_to_session_error()
-            current_timer = 10
+            current_timer = 5
         else:
             interface.add_session_state(machine_session)
             interface.set_countdown(machine_session.inactive_countdown)
