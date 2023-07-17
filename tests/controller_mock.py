@@ -18,7 +18,7 @@ IMAGE_ANALYSE = "AI"
 
 while True:
     option = random.randint(0, 4)
-
+    option = 0
     if option == 0:
         print(IMAGE_ANALYSE, flush=True)
         print("Controller Mock:", input(), file=sys.stderr)
@@ -34,4 +34,4 @@ while True:
     if option == 5:
         print(D_NEMPTY, flush=True)
 
-    time.sleep(5)
+    time.sleep(1)

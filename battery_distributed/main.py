@@ -14,8 +14,6 @@ def terminate(signum, frame):
     interace.APP.quit()
 
 def main():
-    # signal.signal(signal.SIGINT, terminate)
-    # signal.signal(signal.SIGKILL, terminate)
     maquina_id = os.environ.get("MAQUINA_ID", "1")
     maquina = Machine(maquina_id)
 

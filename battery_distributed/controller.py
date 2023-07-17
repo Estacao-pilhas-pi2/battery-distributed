@@ -1,6 +1,7 @@
 import os
 import time
 import logging
+import serial
 
 from threading import Thread
 from subprocess import Popen, PIPE
@@ -14,8 +15,9 @@ import battery_distributed.interface as interface
 
 
 LOG = "Controller"
-CONTROLLER_RUNNER = os.environ.get("CONTROLLER_RUNNER_PATH", "python3 tests/controller_mock.py")
-PROCESS = None
+SERIAL_PORT = os.environ.get("SERIAL_PORT", "/dev/ttyUSB0")
+BAUDRATE = os.environ.get("BAUDRATE", 19200)
+SERIAL = None
 
 machine_session: MachineSession = None
 current_timer = 0
@@ -29,51 +31,52 @@ def init(machine: Machine):
 def controller_spawner(machine: Machine):
     while True:
         try:
-            logging.info(f"{LOG}: Spawning {CONTROLLER_RUNNER} controller")
-            with Popen(CONTROLLER_RUNNER.split(), stdout=PIPE, stdin=PIPE, text=True) as proc:
-                PROCESS = proc
-                for line in proc.stdout:
-                    if not line:
-                        continue
-                    line = line.strip()
-                    if not line:
-                        continue
-                    response = run_command(machine, line)
-                    
-                    if response:
-                        logging.info(f"{LOG}: sending response: {response}")
-                        proc.stdin.write(response)
-                        proc.stdin.write("\n")
-                        proc.stdin.flush()
+#            logging.info(f"{LOG}: Connecting {SERIAL_PORT} serial port")
+            with serial.Serial(SERIAL_PORT, BAUDRATE, timeout=1) as ser:
+                SERIAL = ser
+                ser.reset_input_buffer()
+                ser.reset_output_buffer()
+
+                line = ser.readline()
+                if not line:
+                    continue
+                response = run_command(machine, line)
+
+                if response:
+                    logging.info(f"{LOG}: sending response: {response}")
+                    ser.write(response.encode('utf-8'))
+                    ser.flush()
+        except KeyboardInterrupt:
+            return
         except Exception as e:
-            if PROCESS is not None:
-                PROCESS.terminate()
-            logging.error(f"{LOG}: Error in controller runner. Respawnning in 5 seconds... {e}")
+            if SERIAL is not None:
+                SERIAL.close()
+            logging.error(f"{LOG}: Error in serial port. Reconnecting in 5 seconds... {e}")
 
         time.sleep(5)
 
 
-LOCKER_OPEN = "G0"
-LOCKER_CLOSED = "G1"
-AAA_EMPTY = "AAA0"
-AAA_NEMPTY = "AAA1"
-AA_EMPTY = "AA0"
-AA_NEMPTY = "AA1"
-V9_EMPTY = "9V0"
-V9_NEMPTY = "9V1"
-C_EMPTY = "C0"
-C_NEMPTY = "C1"
-D_EMPTY = "D0"
-D_NEMPTY = "D1"
-IMAGE_ANALYSE = "AI"
+LOCKER_OPEN = b"G0"
+LOCKER_CLOSED = b"G1"
+AAA_EMPTY = b"AAA0"
+AAA_NEMPTY = b"AAA1"
+AA_EMPTY = b"AA0"
+AA_NEMPTY = b"AA1"
+V9_EMPTY = b"9V0"
+V9_NEMPTY = b"9V1"
+C_EMPTY = b"C0"
+C_NEMPTY = b"C1"
+D_EMPTY = b"D0"
+D_NEMPTY = b"D1"
+IMAGE_ANALYSE = b"AI"
 
 
-def run_command(machine: Machine, command: str) -> Optional[str]:
+def run_command(machine: Machine, command: bytes) -> Optional[str]:
     global current_timer
 
     logging.info(f"{LOG}: received command: {command}")
 
-    if command == IMAGE_ANALYSE:
+    if command[:len(IMAGE_ANALYSE)] == IMAGE_ANALYSE:
         interface.change_to_processing()
         reset_machine_session_countdown(machine)
         type = analyser.predict_battery_type()
@@ -89,23 +92,23 @@ def run_command(machine: Machine, command: str) -> Optional[str]:
             current_timer = 1
         return f"AI{type.value}"
 
-    if command == V9_EMPTY:
+    if command[:len(V9_EMPTY)] == V9_EMPTY:
         machine.v9_count = 0
         central.send_machine_empty(machine, "V9")
 
-    if command == AA_EMPTY:
+    if command[:len(AA_EMPTY)] == AA_EMPTY:
         machine.aa_count = 0
         central.send_machine_empty(machine, "AA")
 
-    if command == AAA_EMPTY:
+    if command[:len(AAA_EMPTY)] == AAA_EMPTY:
         machine.aaa_count = 0
         central.send_machine_empty(machine, "AAA")
 
-    if command == C_EMPTY:
+    if command[:len(C_EMPTY)] == C_EMPTY:
         machine.c_count = 0
         central.send_machine_empty(machine, "C")
 
-    if command == D_EMPTY:
+    if command[:len(D_EMPTY)] == D_EMPTY:
         machine.d_count = 0
         central.send_machine_empty(machine, "D")
 
@@ -120,14 +123,14 @@ def increment_battery(machine: Machine, battery: Battery):
     elif battery == Battery.D:
         machine.d_count += 1
     elif battery == Battery.C:
-      machine.c_count += 1
+        machine.c_count += 1
 
 
 def create_machine_session(machine: Machine):
     global machine_session
     machine_session = MachineSession(id=machine.id)
     logging.info(f"{LOG}: creating machine session. Countdown = {machine_session.inactive_countdown}")
-
+    interface.add_session_state(machine_session)
 
 def reset_machine_session_countdown(machine: Machine):
     global current_timer
