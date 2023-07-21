@@ -12,7 +12,7 @@ APP = tk.Tk()
 APP.geometry("1024x600")
 APP.title("")
 APP.configure(bg="#038C3E")
-APP.attributes('-fullscreen', True)
+#APP.attributes('-fullscreen', True)
 
 images = {}
 
